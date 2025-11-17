@@ -174,9 +174,8 @@ public class GameGUI extends JFrame {
     // ==== Button actions ====
     backButton.addActionListener(e -> gameCardLayout.show(gamePanel, "PlayScreen"));
     
-    // CONTINUE button action (placeholder - does nothing for now)
+    // CONTINUE button action (placeholder)
     continueButton.addActionListener(e -> {
-        // This will be implemented later
         System.out.println("Continue button clicked - functionality to be added");
     });
 
