@@ -1,6 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
 
+class ImageBackgroundPanel extends JPanel {
+    private Image backgroundImage;
+
+    public ImageBackgroundPanel(String imagePath) {
+        try {
+            backgroundImage = new ImageIcon(getClass().getResource(imagePath)).getImage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+}
+
 public class GameGUI extends JFrame {
 
     private JPanel gamePanel;
@@ -38,7 +58,6 @@ public class GameGUI extends JFrame {
         gamePanel.add(playScreen, "PlayScreen");
         gamePanel.add(selectionScreen, "SelectionScreen");
 
-        // --- Add Main Panel ---
         add(gamePanel);
         gameCardLayout.show(gamePanel, "MainScreen");
 
@@ -47,14 +66,14 @@ public class GameGUI extends JFrame {
 
     
     private JPanel createPlayScreen() {
-        JPanel playScreen = new JPanel(new BorderLayout());
-        playScreen.setBackground(new Color(40, 40, 60));
+        ImageBackgroundPanel playScreen = new ImageBackgroundPanel("/assets/eldora-background.png");
+        playScreen.setLayout(new BorderLayout());
 
         JPanel playIntro = new JPanel(new BorderLayout());
-        playIntro.setBackground(new Color(40, 40, 60));
+        playIntro.setOpaque(false); // Transparent background
 
         JTextArea playStory = new JTextArea(
-            "Long ago, the peaceful village of Eldonia was destroyed by the Overlord of Shadows, " +
+            "Long ago, the peaceful village of Eldora was destroyed by the Overlord of Shadows, " +
             "leaving five childhood friends as its only survivors. Adrian the Warrior, Jhush the " +
             "Assassin, Cyberg the Mage, Rex the Archer, and Clarence the Tank swore a blood oath " +
             "to fight as brothers and avenge their fallen home.\n\n" +
@@ -64,7 +83,7 @@ public class GameGUI extends JFrame {
         );
         playStory.setForeground(Color.WHITE);
         playStory.setFont(new Font("Serif", Font.PLAIN, 18));
-        playStory.setBackground(new Color(40, 40, 60));
+        playStory.setOpaque(false); // Transparent background
         playStory.setEditable(false);
         playStory.setFocusable(false);
         playStory.setLineWrap(true);
@@ -72,13 +91,13 @@ public class GameGUI extends JFrame {
         playStory.setBorder(BorderFactory.createEmptyBorder(50, 100, 50, 100));
 
         JScrollPane scrollPane = new JScrollPane(playStory);
+        scrollPane.setOpaque(false); // Transparent background
         scrollPane.setBorder(null);
-        scrollPane.setBackground(new Color(40, 40, 60));
-        scrollPane.getViewport().setBackground(new Color(40, 40, 60));
+        scrollPane.getViewport().setOpaque(false); // Transparent viewport
         playIntro.add(scrollPane, BorderLayout.CENTER);
 
         JPanel playButtonPanel = new JPanel();
-        playButtonPanel.setBackground(new Color(40, 40, 60));
+        playButtonPanel.setOpaque(false); // Transparent background
 
         JButton playContinue = new JButton("CONTINUE");
         playContinue.setFont(new Font("Serif", Font.BOLD, 32));
@@ -99,12 +118,12 @@ public class GameGUI extends JFrame {
 
     
     private JPanel createSelectionScreen() {
-        JPanel selectionScreen = new JPanel(new BorderLayout());
-        selectionScreen.setBackground(new Color(40, 40, 60));
+        ImageBackgroundPanel selectionScreen = new ImageBackgroundPanel("/assets/eldora-background.png");
+        selectionScreen.setLayout(new BorderLayout());
 
         // ==== HERO GRID ====
         JPanel heroGrid = new JPanel(new GridBagLayout());
-        heroGrid.setBackground(new Color(40, 40, 60));
+        heroGrid.setOpaque(false); // Transparent background
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 30, 20, 30);
 
@@ -120,12 +139,11 @@ public class GameGUI extends JFrame {
         gbc.gridx = 0; gbc.gridy = 1; heroGrid.add(assassinPanel, gbc);
         gbc.gridx = 1; gbc.gridy = 1; heroGrid.add(tankPanel, gbc);
 
-        // Add hero grid to CENTER of BorderLayout
         selectionScreen.add(heroGrid, BorderLayout.CENTER);
-   // ==== BACK BUTTON (bottom right) ====
-     
+        
+        // ==== BACK BUTTON ====
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 40, 20));
-        bottomPanel.setBackground(new Color(40, 40, 60));
+        bottomPanel.setOpaque(false); // Transparent background
 
         JButton backButton = new JButton("BACK");
         backButton.setFont(new Font("Serif", Font.BOLD, 28));
@@ -146,12 +164,100 @@ public class GameGUI extends JFrame {
 
         return selectionScreen;
     }
+
+    // --- Game Mode Screen ---
+    private JPanel createGameModeScreen() {
+        ImageBackgroundPanel settingPanel = new ImageBackgroundPanel("/assets/eldora-background.png");
+        settingPanel.setLayout(new BorderLayout());
+
+        // Center panel (vertical layout)
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        center.setOpaque(false); // Transparent background
+
+        // Buttons
+        JButton pvpButton = new JButton("PLAYER VS PLAYER");
+        JButton pvaiButton = new JButton("PLAYER VS AI");
+
+        JButton[] buttons = { pvpButton, pvaiButton };
+
+        for (JButton b : buttons) {
+            b.setFont(new Font("Serif", Font.BOLD, 32));
+            b.setForeground(Color.WHITE);
+            styleButton(b);
+            b.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            center.add(Box.createRigidArea(new Dimension(0, 30)));
+            center.add(b);
+        }
+
+        // Wrapper with GridBag for perfect centering
+        JPanel wrapper = new JPanel(new GridBagLayout());
+        wrapper.setOpaque(false); // Transparent background
+        wrapper.add(center);
+
+        settingPanel.add(wrapper, BorderLayout.CENTER);
+
+        // Action listeners
+        pvpButton.addActionListener(e -> {
+            isAi = false;
+            gameCardLayout.show(gamePanel, "MainScreen");
+        });
+
+        pvaiButton.addActionListener(e -> {
+            isAi = true;
+            gameCardLayout.show(gamePanel, "MainScreen");
+        });
+
+        return settingPanel;
+    }
+
+    // --- Main Screen --- (keeps the castle background)
+    private JPanel createMainScreen() {
+        ImageBackgroundPanel menuPanel = new ImageBackgroundPanel("/assets/castle.png");
+        menuPanel.setLayout(new BorderLayout());
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setOpaque(false);
+
+        JLabel menuLogo = new JLabel("Shadows of Eldora");
+        menuLogo.setFont(new Font("Serif", Font.BOLD, 84));
+        menuLogo.setForeground(Color.WHITE);
+        menuLogo.setHorizontalAlignment(SwingConstants.CENTER);
+        menuLogo.setBorder(BorderFactory.createEmptyBorder(100, 0, 100, 0));
+
+        JPanel menuButtons = new JPanel(new GridLayout(3, 1, 15, 15));
+        menuButtons.setOpaque(false);
+        menuButtons.setBorder(BorderFactory.createEmptyBorder(0, 300, 200, 300));
+
+        JButton playButton = new JButton("Play");
+        JButton gameModeButton = new JButton("Game Mode");
+        JButton exitButton = new JButton("Exit");
+
+        JButton[] buttons = { playButton, gameModeButton, exitButton };
+        for (JButton b : buttons) {
+            b.setFont(new Font("Serif", Font.BOLD, 32));
+            b.setForeground(Color.WHITE);
+            styleButton(b);
+            menuButtons.add(b);
+        }
+
+        playButton.addActionListener(e -> gameCardLayout.show(gamePanel, "PlayScreen"));
+        gameModeButton.addActionListener(e -> gameCardLayout.show(gamePanel, "GameMode"));
+        exitButton.addActionListener(e -> System.exit(0));
+
+        centerPanel.add(menuLogo, BorderLayout.NORTH);
+        centerPanel.add(menuButtons, BorderLayout.CENTER);
+        menuPanel.add(centerPanel, BorderLayout.CENTER);
+
+        return menuPanel;
+    }
     
     private void addHeroClick(JPanel panel, Hero hero) {
         panel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (count >= 3) return; // limit per side to 3 heroes
+                if (count >= 3) return;
 
                 if (isPlayerTurn) {
                     myTeam[count] = hero;
@@ -166,7 +272,6 @@ public class GameGUI extends JFrame {
                 if (count == 3) {
                     if (isPlayerTurn) {
                         if(isAi){
-                            // AI randomly selects 3 heroes
                             selectRandomTeamForAI();
                             System.out.println("AI team automatically selected!");
                             System.out.println("Both teams ready! Starting battle...");
@@ -184,6 +289,7 @@ public class GameGUI extends JFrame {
             }
         });
     }
+    
     private void selectRandomTeamForAI(){
          java.util.Random rand = new java.util.Random();
         Hero[] availablHeroes = {
@@ -203,7 +309,7 @@ public class GameGUI extends JFrame {
     private JPanel createHeroPanel(String name, String hp, String MP) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(180, 180));
-        panel.setBackground(new Color(60, 60, 90));
+        panel.setBackground(new Color(60, 60, 90, 180)); // Semi-transparent for readability
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2, true));
 
@@ -231,92 +337,6 @@ public class GameGUI extends JFrame {
         panel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         return panel;
-    }
-
-    // --- Main Screen ---
-    private JPanel createMainScreen() {
-        JPanel menuPanel = new JPanel(new BorderLayout());
-        menuPanel.setBackground(new Color(40, 40, 60));
-
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setOpaque(false);
-
-        JLabel menuLogo = new JLabel("Shadows of Eldora");
-        menuLogo.setFont(new Font("Serif", Font.BOLD, 48));
-        menuLogo.setForeground(Color.WHITE);
-        menuLogo.setHorizontalAlignment(SwingConstants.CENTER);
-        menuLogo.setBorder(BorderFactory.createEmptyBorder(100, 0, 100, 0));
-
-        JPanel menuButtons = new JPanel(new GridLayout(3, 1, 15, 15));
-        menuButtons.setBackground(new Color(40, 40, 60));
-        menuButtons.setBorder(BorderFactory.createEmptyBorder(0, 300, 200, 300));
-
-        JButton playButton = new JButton("Play");
-        JButton gameModeButton = new JButton("Game Mode");
-        JButton exitButton = new JButton("Exit");
-
-        JButton[] buttons = { playButton, gameModeButton, exitButton };
-        for (JButton b : buttons) {
-            b.setFont(new Font("Serif", Font.BOLD, 32));
-            b.setForeground(Color.WHITE);
-            styleButton(b);
-            menuButtons.add(b);
-        }
-
-        playButton.addActionListener(e ->
-            gameCardLayout.show(gamePanel, "PlayScreen")
-        );
-        gameModeButton.addActionListener(e ->
-            gameCardLayout.show(gamePanel, "GameMode")
-        );
-        exitButton.addActionListener(e -> System.exit(0));
-
-        centerPanel.add(menuLogo, BorderLayout.NORTH);
-        centerPanel.add(menuButtons, BorderLayout.CENTER);
-        menuPanel.add(centerPanel, BorderLayout.CENTER);
-
-        return menuPanel;
-    }
-
-    // --- Game Mode Screen ---
-    private JPanel createGameModeScreen() {
-        JPanel settingPanel = new JPanel(new BorderLayout());
-        settingPanel.setBackground(new Color(40, 40, 60));
-
-        JPanel center = new JPanel();
-        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-        center.setBackground(new Color(40, 40, 60));
-
-        JButton pvpButton = new JButton("PLAYER VS PLAYER");
-        JButton pvaiButton = new JButton("PLAYER VS AI");
-
-        JButton[] buttons = { pvpButton, pvaiButton };
-        for (JButton b : buttons) {
-            b.setFont(new Font("Serif", Font.BOLD, 32));
-            b.setForeground(Color.WHITE);
-            styleButton(b);
-            b.setAlignmentX(Component.CENTER_ALIGNMENT);
-            center.add(Box.createRigidArea(new Dimension(0, 30)));
-            center.add(b);
-        }
-
-        JPanel wrapper = new JPanel(new GridBagLayout());
-        wrapper.setBackground(new Color(40, 40, 60));
-        wrapper.add(center);
-
-        settingPanel.add(wrapper, BorderLayout.CENTER);
-
-        pvpButton.addActionListener(e -> {
-            isAi = false;
-            gameCardLayout.show(gamePanel, "MainScreen");
-        });
-
-        pvaiButton.addActionListener(e -> {
-            isAi = true;
-            gameCardLayout.show(gamePanel, "MainScreen");
-        });
-
-        return settingPanel;
     }
 
     
