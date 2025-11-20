@@ -1,10 +1,13 @@
 class Tank extends Hero {
+    private static final int default_hp = 300;
+    private static final int default_mp = 100;
+
     public Tank(String name) {
-        super(name, 300, 100);
+        super(name, default_hp, default_mp);
         skill = new Skill[]{
-            skill[0] = new Skill("Shield Bash", 20, 10),
-            skill[1] = new Skill("Ground Slam", 30, 20),
-            skill[2] = new Skill("Iron Fist", 40, 30)  
+            new Skill("Shield Bash", 20, 10),
+            new Skill("Ground Slam", 30, 20),
+            new Skill("Iron Fist", 40, 30)  
         };
     }
 
@@ -24,6 +27,7 @@ class Tank extends Hero {
     public Skill[] getSkillsArray() {
         return skill;
     }
+    
     
     
     public boolean isTank() {

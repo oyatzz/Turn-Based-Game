@@ -292,12 +292,12 @@ public class GameGUI extends JFrame {
         panel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                // Don't allow selection if already have 3 heroes
+                
                 if (count >= 3) {
                     return;
                 }
                 
-                // Create NEW hero instance
+                
                 Hero newHero;
                 if (hero instanceof Archer) {
                     newHero = new Archer(hero.getName());
@@ -351,11 +351,11 @@ public class GameGUI extends JFrame {
     private void selectRandomTeamForAI() {
         java.util.Random rand = new java.util.Random();
         Hero[] availableHeroes = {
-                new Archer("Rex"),
-                new Warrior("Adrian"),
-                new Mage("Cyberg"),
-                new Assassin("Jhush"),
-                new Tank("Clarence")
+                new Archer("Evil Rex"),
+                new Warrior("Evil Adrian"),
+                new Mage("Evil Cyberg"),
+                new Assassin("Evil Jhush"),
+                new Tank("Evil Clarence")
         };
         for (int i = 0; i < 3; i++) {
             int aiIndex = rand.nextInt(availableHeroes.length);

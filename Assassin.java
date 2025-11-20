@@ -1,10 +1,12 @@
 class Assassin extends Hero{
+    private static final int default_hp = 150;
+    private static final int default_mp = 120;
     public Assassin(String name){
-        super(name, 150, 120);
+        super(name, default_hp, default_mp);
         skill = new Skill[]{
-            skill[0] = new Skill("Quick Stab", 35 , 30),
-        skill[1] = new Skill("Shadow strike",70 , 50),
-        skill[2] = new Skill("Deadly Ambush", 90, 100)
+        new Skill("Quick Stab", 35 , 30),
+        new Skill("Shadow strike",70 , 50),
+        new Skill("Deadly Ambush", 90, 100)
         };
     }
     @Override

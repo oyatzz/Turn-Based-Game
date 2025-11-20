@@ -1,11 +1,13 @@
 class Mage extends Hero{
-    
+     private static final int default_hp = 120;
+    private static final int default_mp = 200;
+
     public Mage(String name){
-        super(name, 120, 200);
+        super(name, default_hp, default_mp);
         skill = new Skill[]{
-            skill[0] = new Skill("FireBall",30,20),
-            skill[1] = new Skill("Earthquake", 15 , 20),
-            skill[2] = new Skill("Thunder Bolt", 50 , 80)
+            new Skill("FireBall",30,20),
+            new Skill("Earthquake", 15 , 20),
+            new Skill("Thunder Bolt", 50 , 80)
         };
     }
     @Override

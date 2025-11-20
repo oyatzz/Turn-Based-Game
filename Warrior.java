@@ -1,10 +1,12 @@
-class Warrior extends Hero{
+class Warrior extends Hero{ 
+    private static final int default_hp = 200;
+    private static final int default_mp = 100;
     public Warrior(String name){
-        super(name, 200, 100);
+         super(name, default_hp, default_mp);
         skill = new Skill[]{
-            skill[0]  = new Skill("Slash", 30, 10),
-            skill[1] = new Skill("Power Strike",60,30),
-            skill[2] = new Skill("Tornado Slash", 50 , 35)
+            new Skill("Slash", 30, 10),
+            new Skill("Power Strike",60,30),
+            new Skill("Tornado Slash", 50 , 35)
         };
     }
     @Override
